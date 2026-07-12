@@ -913,6 +913,22 @@ def test_decnuclass():
         ax.loglog(pk.k, pk(pk.k, z=1.))
     plt.show()
 
+def test_nudmclass():
+    cosmo_class = Cosmology(engine='class')
+    try:
+        cosmo = Cosmology(engine='nudmclass')
+    except ImportError:
+        return
+
+    k = np.linspace(0.01, 1., 200)
+    z = np.linspace(0., 2., 10)
+    assert np.allclose(cosmo_class.get_fourier().pk_interpolator()(k=k, z=z), cosmo.get_fourier().pk_interpolator()(k=k, z=z), atol=0., rtol=1e-4)
+
+    params = {'m_ncdm': 0.4, 'u_cdm_ncdm': 1e-5}
+    cosmo = Cosmology(engine='nudmclass', **params)
+    assert not np.allclose(cosmo_class.get_fourier().pk_interpolator(of='theta_cb')(k=k, z=z), cosmo.get_fourier().pk_interpolator(of='theta_cb')(k=k, z=z), atol=0., rtol=1e-4)
+    cosmo.comoving_radial_distance(z)
+
 def test_neff():
     for m_ncdm in [[], [0.] * 3]:
         cosmo = Cosmology(engine='class', m_ncdm=m_ncdm)
@@ -1627,5 +1643,7 @@ if __name__ == '__main__':
     test_axiclass()
     test_mochiclass()
     test_negnuclass()
+    test_decnuclass()
+    test_nudmclass()
     test_default_background()
     #test_fk()

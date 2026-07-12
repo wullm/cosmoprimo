@@ -597,6 +597,8 @@ def get_engine(engine):
             from . import negnuclassy
         elif engine in ['decnuclass', 'decnuclassy']:
             from . import decnuclassy
+        elif engine in ['nudmclass', 'nudmclassy']:
+            from . import nudmclassy
         elif engine == 'camb':
             from . import camb
         elif engine == 'isitgr':
